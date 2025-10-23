@@ -13,7 +13,13 @@ const DATABASE = new Client(
     }
 )
 
-DATABASE.connect()
+if(DATABASE.connect()){
+    console.log("✅ Database Connected.")
+}else{
+    console.log("Error while Connecting Database")
+}
+
+
 
 
 module.exports = DATABASE

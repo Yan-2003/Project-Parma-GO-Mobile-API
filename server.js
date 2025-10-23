@@ -12,8 +12,6 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 
 
-console.log(database_pg)
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
