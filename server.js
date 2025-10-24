@@ -7,6 +7,8 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const database_pg = require('./database/DB')
 
+const PharmacyRouter = require("/routes/PharmacyRouter")
+
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -65,6 +67,10 @@ app.post('/ocr', upload.single('image'), (req, res) => {
   child.stderr.on('data', (data) => console.error('PYTHON ERR:', data.toString()));
 });
 
+
+// other routers
+
+app.use('/pharmacy', PharmacyRouter)
 
 
 

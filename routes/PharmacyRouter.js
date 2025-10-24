@@ -16,13 +16,12 @@ router.post('/add_pharmacy', (req, res)=>{
 
     const Pharmacy = new PharmacyController()
 
-    Pharmacy.pharmacy_add(data.name, data.address, data.email, data.openning_hours, data.contact_number, data.latitude, data.longitude)
-
-
-    
-
-
-
+    try {
+        Pharmacy.pharmacy_add(data.name, data.address, data.email, data.openning_hours, data.contact_number, data.latitude, data.longitude)
+        res.json({message :  "added new pharmacy"})
+    } catch (error) {
+        res.send(error)
+    }
 })
 
 
