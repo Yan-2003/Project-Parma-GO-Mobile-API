@@ -7,9 +7,22 @@ class Pharmacy{
 
         db.query(`INSERT INTO pharmacy_tbl(name, address, email, contact_number, latitude, longitude, openning_hours) VALUES('${name}','${address}', '${email}', '${contact_number}', ${latitude}, ${longitude}, '${openning_hours}'  )`).then(e =>{
             console.log(e)
-        })
+        }).catch(error=>console.log(error))
     }   
     
+
+    async pharmacy_all (){
+        try {
+            const query = await db.query('SELECT * FROM pharmacy_tbl')
+            console.log(query.rows)
+            return query.rows
+        } catch (error) {
+            console.log(error)
+            return error
+        }
+
+        
+    }
 
 
 

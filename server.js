@@ -7,7 +7,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const database_pg = require('./database/DB')
 
-const PharmacyRouter = require("/routes/PharmacyRouter")
+const PharmacyRouter = require("./routes/PharmacyRouter")
 
 
 const PORT = process.env.PORT || 8000;

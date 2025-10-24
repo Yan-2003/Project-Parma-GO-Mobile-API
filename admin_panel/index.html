@@ -7,16 +7,16 @@
     <title>Admin Panel</title>
 </head>
 <body>
-    <form action="http:localhost:8000/pharmacy/add_pharmacy" method="post">
+    <form action="http://localhost:8000/pharmacy/add_pharmacy" method="post">
 
         <h1>Create a new Pharmacy</h1>
-        <input id="name" type="text" placeholder="Pharmacy Name">
-        <input id="address" type="text" placeholder="Pharmacy Address">
-        <input id="email" type="text" placeholder="Pharmacy Email">
-        <input id="openning_hours" type="text" placeholder="Openning Hours">
-        <input id="contact_number" type="text" placeholder="Contact Number">
-        <input id="latitude" type="number" placeholder="Latitude">
-        <input id="longitude" type="number" placeholder="Longitude">
+        <input name="name" id="name" type="text" placeholder="Pharmacy Name">
+        <input name="address" id="address" type="text" placeholder="Pharmacy Address">
+        <input name="email" id="email" type="text" placeholder="Pharmacy Email">
+        <input name="openning_hours" id="openning_hours" type="text" placeholder="Openning Hours">
+        <input name="contact_number" id="contact_number" type="text" placeholder="Contact Number">
+        <input name="latitude" id="latitude" step="any" type="number" placeholder="Latitude">
+        <input name="longitude" id="longitude" step="any" type="number" placeholder="Longitude">
         <button type="submit">Submit</button>
 
     </form>
