@@ -7,12 +7,15 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # Load your custom handwriting model
-model = YOLO(r"S:\Project Pharma\Pharma YoloV8\runs\detect\pharma_OCR2\weights\best.pt")
+model = YOLO(r"/Users/jull/Desktop/Project Pharma/Pharma YoloV8/runs/detect/pharma_OCR_v27/weights/best.pt")
 
 # Map class indices to your actual characters/words
 # Example: {0: "Paracetamol", 1: "Ibuprofen", 2: "500mg", ...}
 class_map = {
-    0: "Amoxicillin"
+    0 : "Amoxicillin",
+    1 : "Ibuprofen",
+    2 : "Losartan",
+
 }
 
 if len(sys.argv) < 2:
