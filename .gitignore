@@ -2,3 +2,4 @@ Models/
 uploads/
 node_modules/
 .env
+venv
