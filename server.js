@@ -9,6 +9,7 @@ const database_pg = require('./database/DB')
 
 const PharmacyRouter = require("./routes/PharmacyRouter")
 const MedicineRouter = require('./routes/MedicineRotuer')
+const UserRouter = require('./routes/UserRouter')
 
 
 const PORT = process.env.PORT || 8000;
@@ -73,6 +74,7 @@ app.post('/ocr', upload.single('image'), (req, res) => {
 
 app.use('/pharmacy', PharmacyRouter)
 app.use('/medicine', MedicineRouter)
+app.use('/user', UserRouter)
 
 
 app.listen(PORT, () => {
