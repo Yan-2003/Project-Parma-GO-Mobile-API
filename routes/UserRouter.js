@@ -4,13 +4,13 @@ const UserController = require('../controller/UserController')
 
 router.post("/login", (req , res) =>{
     const login_user = {
-        usename : req.body.username,
+        username : req.body.username,
         password : req.body.password
     }
 
     const Login = new UserController()
 
-    const user_data = Login.login(username, password)
+    const user_data = Login.login(login_user.username, login_user.password)
 
     if(user_data == null) return res.json({"message" : "error"}).status(401) 
 
