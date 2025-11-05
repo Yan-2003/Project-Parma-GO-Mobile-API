@@ -3,8 +3,18 @@ const router = express.Router()
 const UserController = require('../controller/UserController')
 
 router.post("/login", (req , res) =>{
+    const login_user = {
+        usename : req.body.username,
+        password : req.body.password
+    }
 
+    const Login = new UserController()
 
+    const user_data = Login.login(username, password)
+
+    if(user_data == null) return res.json({"message" : "error"}).status(401) 
+
+    return res.json(user_data).status(200)
 })
 
 
@@ -30,7 +40,9 @@ router.post("/register", async (req, res)=>{
 
 router.get("/check_username/:username", (req ,res)=>{
 
-    //req.params.username
+    const CheckUser = new UserController()
+
+    res.json({"user_found" :  CheckUser.check_user(req.params.username)}).status(200)
 
 })
 

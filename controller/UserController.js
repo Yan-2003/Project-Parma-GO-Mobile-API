@@ -43,17 +43,22 @@ class User{
 
         
         try {
-            const query = await db.query(`SELECT username, password FROM user_tbl WHERE username='${username}'`)
+            const query = await db.query(`SELECT username, password, name, user_role FROM user_tbl WHERE username='${username}'`)
             
-            if(bcrypt.compare(password, query.rows[0]['password'])) return true
+            if(bcrypt.compare(password, query.rows[0]['password'])) return query.rows[0]
 
-            return false
+            return {
+                "message" : "error"
+            }
 
         } catch (error) {
 
             console.log(error)
-            
-            return false
+
+            return {
+                "message" : "error"
+            }
+
             
         }
 

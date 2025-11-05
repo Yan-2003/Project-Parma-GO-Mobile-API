@@ -5,7 +5,6 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const database_pg = require('./database/DB')
 
 const PharmacyRouter = require("./routes/PharmacyRouter")
 const MedicineRouter = require('./routes/MedicineRotuer')
