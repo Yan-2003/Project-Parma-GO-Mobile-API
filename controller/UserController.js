@@ -11,8 +11,8 @@ class User{
             const salt = 20
     
             const hash_password = await bcrypt.hash(password, salt)
-    
-            const query = await db.query(`INSERT user_tbl(username, name, user_role, password) VALUES('${username}', '${name}', '${user_role}', '${hash_password}')`)
+
+            const query = await db.query(`INSERT INTO user_tbl(username, name, password) VALUES('${username}', '${name}', '${hash_password}')`)
     
             console.log(query)
             return true

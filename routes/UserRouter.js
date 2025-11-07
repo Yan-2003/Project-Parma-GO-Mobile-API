@@ -19,6 +19,7 @@ router.post("/login", (req , res) =>{
 
 
 router.post("/register", async (req, res)=>{
+
     const reg_user = {
         username : req.body.username,
         name : req.body.name,
@@ -28,6 +29,7 @@ router.post("/register", async (req, res)=>{
 
     const user = new UserController()
 
+    console.log(reg_user)
 
     if(await user.add_user(reg_user.username, reg_user.name , reg_user.user_role, reg_user.password)){
         return res.json({"message" : "successfully registered."}).status(200)
