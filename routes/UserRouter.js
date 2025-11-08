@@ -1,20 +1,28 @@
 const express = require('express')
 const router = express.Router()
 const UserController = require('../controller/UserController')
+const bcrypt = require('bcrypt')
 
-router.post("/login", (req , res) =>{
+router.post("/login", async (req , res) =>{
     const login_user = {
         username : req.body.username,
         password : req.body.password
     }
 
+    console.log("user data: ", login_user)
+
     const Login = new UserController()
 
-    const user_data = Login.login(login_user.username, login_user.password)
+    const user_data = await Login.login(login_user.username, login_user.password)
 
-    if(user_data == null) return res.json({"message" : "error"}).status(401) 
+    if(user_data){
+        console.log("Authentication Successful")
+        return res.json(user_data).status(200)
+    }else{
+        console.log("Authentication Failed")
+        return res.json({mesasge : "login unsuccessful"}).status(401)
+    }
 
-    return res.json(user_data).status(200)
 })
 
 
@@ -40,11 +48,15 @@ router.post("/register", async (req, res)=>{
 })
 
 
-router.get("/check_username/:username", (req ,res)=>{
+router.get("/check_username/:username", async (req ,res)=>{
+
+    console.log("checking username: ", req.params.username)
 
     const CheckUser = new UserController()
 
-    res.json({"user_found" :  CheckUser.check_user(req.params.username)}).status(200)
+    console.log(await CheckUser.check_user(req.params.username))
+
+    res.json({"user_found" : await CheckUser.check_user(req.params.username)}).status(200)
 
 })
 

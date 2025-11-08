@@ -28,9 +28,13 @@ class User{
         try {
             const query = await db.query(`SELECT username FROM user_tbl WHERE username='${username}'`)
 
-            if(query.rowCount > 0) return false
+            console.log("result: ", query.rowCount)
 
-            return true
+            if(query.rowCount > 0){
+                return true
+            }
+
+            return false
             
         } catch (error) {
             console.log(error)
@@ -44,22 +48,23 @@ class User{
         
         try {
             const query = await db.query(`SELECT username, password, name, user_role FROM user_tbl WHERE username='${username}'`)
-            
-            if(bcrypt.compare(password, query.rows[0]['password'])) return query.rows[0]
 
-            return {
-                "message" : "error"
+            if(query.rowCount == 0 ){
+                 return false
             }
+
+            console.log("username: " + username)
+            console.log("password: ", password)
+
+            console.log(query.rows[0])
+
+            if(await bcrypt.compare(password, query.rows[0].password)) return query.rows[0]
 
         } catch (error) {
 
             console.log(error)
 
-            return {
-                "message" : "error"
-            }
-
-            
+            return false
         }
 
     }
