@@ -9,7 +9,7 @@ from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 warnings.filterwarnings("ignore")
 
 MODEL_PATH = os.path.join(
-    os.path.dirname(__file__), "../Models/TrOCR/results/checkpoint-2340"
+    os.path.dirname(__file__), "../Models/TrOCR/results/checkpoint-15600"
 )
 
 # Verify model folder exists
