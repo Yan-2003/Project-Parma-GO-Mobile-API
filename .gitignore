@@ -1,5 +1,7 @@
-Models/
 uploads/
 node_modules/
 .env
 venv
+models/TrOCR/data/
+models/TrOCR/model/
+models/TrOCR/results/

@@ -1,0 +1,44 @@
+# Project Setup Requirements & Installation Guide
+
+## Python Requirements (requirements.txt)
+numpy
+pandas
+Pillow
+scikit-learn
+torch
+torchvision
+torchaudio
+transformers==4.41.2
+datasets
+sentencepiece
+accelerate
+python-dotenv
+opencv-python
+protobuf
+
+## Node Dependencies (package.json)
+express
+multer
+dotenv
+uuid
+
+## Setup Instructions
+1. Create venv:
+   python3 -m venv venv
+   source venv/bin/activate
+
+2. Install PyTorch (Mac ARM):
+   pip install torch torchvision torchaudio
+
+3. Install all Python dependencies:
+   pip install -r requirements.txt
+
+4. Run training:
+   python models/TrOCR/train.py
+
+5. Test model:
+   python models/TrOCR/test.py
+
+6. Start API:
+   npm install
+   node server.js
