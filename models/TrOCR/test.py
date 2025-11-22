@@ -9,6 +9,7 @@ from transformers import (
 )
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import re
 
 # ============================================
 # 📂 CORRECT PATH SETUP
@@ -103,39 +104,61 @@ test_dataset.set_format("torch")
 # ============================================
 # 🧪 EVALUATION METRICS
 # ============================================
+# (Replaced earlier naive CER implementation with Levenshtein-based functions below)
+
+def _levenshtein_seq(a, b):
+    """Compute Levenshtein distance between two sequences (strings or lists)."""
+    # convert to lists if strings
+    if isinstance(a, str) and isinstance(b, str):
+        a = list(a)
+        b = list(b)
+
+    la, lb = len(a), len(b)
+    if la == 0:
+        return lb
+    if lb == 0:
+        return la
+
+    prev = list(range(lb + 1))
+    for i in range(1, la + 1):
+        cur = [i] + [0] * lb
+        for j in range(1, lb + 1):
+            cost = 0 if a[i - 1] == b[j - 1] else 1
+            cur[j] = min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
+        prev = cur
+    return prev[lb]
+
+def normalize_text(s):
+    if s is None:
+        return ""
+    s = str(s).lower().strip()
+    # keep only alphanumeric and spaces
+    s = re.sub(r'[^a-z0-9\s]', '', s)
+    s = re.sub(r'\s+', ' ', s)
+    return s
+
 def calculate_cer(predictions, ground_truth):
-    """Calculate Character Error Rate (CER)"""
-    errors = 0
+    """Character Error Rate using Levenshtein distance over characters."""
+    total_errors = 0
     total_chars = 0
-    
     for pred, truth in zip(predictions, ground_truth):
-        # Normalize strings
-        pred = str(pred).strip()
-        truth = str(truth).strip()
-        
-        # Calculate edit distance (simplified)
-        total_chars += len(truth)
-        if pred != truth:
-            errors += max(len(pred), len(truth))
-    
-    cer = errors / total_chars if total_chars > 0 else 0
-    return cer
+        p = normalize_text(pred)
+        t = normalize_text(truth)
+        total_errors += _levenshtein_seq(p, t)
+        total_chars += len(t)
+    return (total_errors / total_chars) if total_chars > 0 else 0
 
 def calculate_wer(predictions, ground_truth):
-    """Calculate Word Error Rate (WER)"""
-    errors = 0
+    """Word Error Rate using Levenshtein distance over words."""
+    total_errors = 0
     total_words = 0
-    
     for pred, truth in zip(predictions, ground_truth):
-        pred_words = str(pred).strip().split()
-        truth_words = str(truth).strip().split()
-        
-        total_words += len(truth_words)
-        if pred_words != truth_words:
-            errors += max(len(pred_words), len(truth_words))
-    
-    wer = errors / total_words if total_words > 0 else 0
-    return wer
+        p_words = normalize_text(pred).split()
+        t_words = normalize_text(truth).split()
+        total_errors += _levenshtein_seq(p_words, t_words)
+        total_words += len(t_words)
+    return (total_errors / total_words) if total_words > 0 else 0
+
 
 # ============================================
 # 🚀 INFERENCE
@@ -145,22 +168,34 @@ print(f"\n🧪 Testing on {len(test_dataset)} samples...\n")
 predictions = []
 ground_truths = []
 correct_predictions = 0
+medicine_prefix_matches = 0
+
+# load raw labels to evaluate medicine-only matches
+raw_df = pd.read_csv(TEST_CSV)
+med_list = raw_df["MEDICINE_NAME"].astype(str).tolist()
 
 with torch.no_grad():
     for idx, example in enumerate(tqdm(test_dataset, desc="Testing")):
         pixel_values = example["pixel_values"].unsqueeze(0).to(device)
         ground_truth = example["text"]
-        
+
         # Generate prediction
         generated_ids = model.generate(pixel_values, max_length=64)
         predicted_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
-        
+
         predictions.append(predicted_text)
         ground_truths.append(ground_truth)
-        
-        # Count exact matches
-        if predicted_text.strip().lower() == ground_truth.strip().lower():
+
+        # normalized exact-match
+        if normalize_text(predicted_text) == normalize_text(ground_truth):
             correct_predictions += 1
+
+        # medicine-name prefix match (useful because labels are "MEDICINE GENERIC")
+        med = med_list[idx] if idx < len(med_list) else ""
+        med_words = normalize_text(med).split()
+        pred_words = normalize_text(predicted_text).split()
+        if med_words and pred_words[: len(med_words)] == med_words:
+            medicine_prefix_matches += 1
 
 # ============================================
 # 📈 RESULTS

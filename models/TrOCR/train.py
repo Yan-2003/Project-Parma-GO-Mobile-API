@@ -3,6 +3,7 @@ import pandas as pd
 from PIL import Image
 from datasets import Dataset
 import torch
+import re
 
 from transformers import (
     TrOCRProcessor,
@@ -100,6 +101,33 @@ train_dataset.set_format(type="torch")
 val_dataset.set_format(type="torch")
 
 # ============================================
+# 📊 COMPUTE METRICS FUNCTION
+# ============================================
+import re
+from difflib import SequenceMatcher
+
+def compute_metrics(pred):
+    """Compute accuracy metrics during evaluation."""
+    predictions = pred.predictions
+    labels = pred.label_ids
+    
+    # Replace -100 (ignore tokens) with pad token
+    pad_token_id = processor.tokenizer.pad_token_id
+    predictions[predictions == -100] = pad_token_id
+    labels[labels == -100] = pad_token_id
+    
+    # Decode predictions and labels
+    decoded_preds = processor.batch_decode(predictions, skip_special_tokens=True)
+    decoded_labels = processor.batch_decode(labels, skip_special_tokens=True)
+    
+    # Calculate exact match accuracy
+    exact_matches = sum(1 for pred, label in zip(decoded_preds, decoded_labels) 
+                       if pred.strip().lower() == label.strip().lower())
+    accuracy = exact_matches / len(decoded_preds) if decoded_preds else 0
+    
+    return {"accuracy": accuracy}
+
+# ============================================
 # 🧩 TRAINING ARGUMENTS (FULLY COMPATIBLE)
 # ============================================
 common_args = dict(
@@ -131,17 +159,22 @@ except TypeError:
 # ============================================
 # 🚀 TRAINER
 # ============================================
+def collate_fn(features):
+    """Collate batch of examples."""
+    pixel_values = torch.stack([f["pixel_values"] for f in features])
+    labels = torch.stack([f["labels"] for f in features])
+    return {
+        "pixel_values": pixel_values,
+        "labels": labels,
+    }
+
 trainer = Seq2SeqTrainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=val_dataset,
-    tokenizer=processor,
-    # simple collate that stacks pixel_values and labels into batches
-    data_collator=lambda features: {
-        "pixel_values": torch.stack([f["pixel_values"] for f in features]),
-        "labels": torch.stack([f["labels"] for f in features]),
-    },
+    compute_metrics=compute_metrics,
+    data_collator=collate_fn,
 )
 
 print(f"🚀 Training started: {len(train_dataset)} samples")

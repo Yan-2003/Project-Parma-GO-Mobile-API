@@ -34,9 +34,8 @@ app.post('/ocr', upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image uploaded.' });
 
   const imagePath = path.resolve(req.file.path);
-  const pythonScript = path.resolve('./scripts/Pharma_TrOCR.py');
-
-
+  const pythonScript = path.resolve('./scripts/model.py');
+ 
   const child = exec(`python "${pythonScript}" "${imagePath}"`, { timeout: 60000 }, (error, stdout, stderr) => {
 
     if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
