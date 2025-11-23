@@ -2,12 +2,11 @@ const express = require('express')
 const router = express.Router()
 const MedicineController = require('../controller/MedicineController')
 
+const med = new MedicineController()
 
 router.get('/get_pharmacy_medicine/:id', async (req, res)=>{
     try {
         const pharma_id = req.params.id
-
-        const med = new MedicineController()
 
         const items = await med.get_pharmacy_medicine(pharma_id)
 
@@ -18,6 +17,22 @@ router.get('/get_pharmacy_medicine/:id', async (req, res)=>{
         res.send(error).status(500)
     }
 
+})
+
+router.get('/get_pharmacy_meds/search', async (req, res)=>{
+    try {
+        
+        const searchinput = req.query.input?.toLowerCase().trim() || " "
+
+        console.log("Seach Input: " + searchinput)
+        
+        const items = await med.get_search_medicine(searchinput)
+
+        res.json(items).status(200)
+
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 

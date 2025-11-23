@@ -13,6 +13,25 @@ class Medicine{
     }
 
 
+    async get_search_medicine(input){
+        try{
+
+            input = input.replace(/"/g, "")
+            
+            const query = await db.query(`SELECT * FROM medicine_tbl WHERE LOWER(name) LIKE LOWER('${input}%')`) 
+            console.log(query)
+            console.log(query.rows)
+
+            return query.rows
+
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }
+
+
 }
 
 
