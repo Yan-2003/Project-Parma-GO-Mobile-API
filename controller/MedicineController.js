@@ -18,7 +18,24 @@ class Medicine{
 
             input = input.replace(/"/g, "")
             
-            const query = await db.query(`SELECT * FROM medicine_tbl WHERE LOWER(name) LIKE LOWER('${input}%')`) 
+            const query = await db.query(`
+                SELECT 
+                med.id as id,
+                med.name as name,
+                med.dosage_form as dosage_form,
+                med.strength as strength,
+                med.description as description,
+                med.price as price,
+                med.stock as price,
+                med.expiration_date as expiration_date,
+                pharma.name as pharma_name,
+                pharma.latitude as latitude,
+                pharma.longitude as longitude,
+                pharma.address as address
+                FROM medicine_tbl as med , pharmacy_tbl as pharma 
+                WHERE LOWER(med.name) LIKE LOWER('${input}%') AND med.pharmacy_id = pharma.id
+                                
+            `) 
             console.log(query)
             console.log(query.rows)
 
