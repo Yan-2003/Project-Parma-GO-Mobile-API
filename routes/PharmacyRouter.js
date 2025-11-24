@@ -45,6 +45,10 @@ router.get("/get_pharmacies", async (req, res)=>{
     }
 })
 
+router.get('/home', async ( req, res)=>{
+    
+})
+
 
 
 module.exports = router
