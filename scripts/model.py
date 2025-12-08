@@ -65,7 +65,7 @@ class TrOCRModel:
 		if self.processor is None or self.model is None:
 			raise RuntimeError("Model not loaded. Call `load(...)` first.")
 
-	def predict(self, images: List[Image.Image], max_length: int = 128, num_beams: int = 4) -> List[str]:
+	def predict(self, images: List[Image.Image], max_length: int = 32, num_beams: int = 4) -> List[str]:
 		"""Run inference on a list of PIL images and return decoded strings."""
 		self._ensure_loaded()
 
@@ -82,7 +82,7 @@ class TrOCRModel:
 		preds = self.processor.batch_decode(generated_ids, skip_special_tokens=True)
 		return [p.strip() for p in preds]
 
-	def predict_from_path(self, image_path: Union[str, os.PathLike], max_length: int = 128, num_beams: int = 4) -> str:
+	def predict_from_path(self, image_path: Union[str, os.PathLike], max_length: int = 32, num_beams: int = 4) -> str:
 		"""Load a single image from path and run inference returning the text."""
 		img = Image.open(str(image_path)).convert("RGB")
 		return self.predict([img], max_length=max_length, num_beams=num_beams)[0]
@@ -109,12 +109,14 @@ if __name__ == "__main__":
 	parser.add_argument("--model", default="microsoft/trocr-base-handwritten", help="Model name or local path")
 	parser.add_argument("--device", default=None, help="Device to use (cpu or cuda). Auto-detected if omitted")
 	parser.add_argument("--beams", type=int, default=4, help="Number of beams for generation")
-	parser.add_argument("--max-len", type=int, default=128, help="Maximum generation length")
+	parser.add_argument("--max-len", type=int, default=32, help="Maximum generation length")
 
 	args = parser.parse_args()
 
 	try:
-		text = recognize_image(args.image, model=args.model, device=args.device)
+		tr = TrOCRModel()
+		tr.load(args.model, device=args.device)
+		text = tr.predict_from_path(args.image, max_length=args.max_len, num_beams=args.beams)
 		print(json.dumps({"text": text.strip()}))
 	except Exception as e:
 		print(json.dumps({"error": str(e)}))

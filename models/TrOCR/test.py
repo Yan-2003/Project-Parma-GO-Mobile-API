@@ -80,7 +80,7 @@ def preprocess(example):
 
     labels = processor.tokenizer(
         example["text"],
-        max_length=64,
+        max_length=32,
         truncation=True,
         padding="max_length",
         return_tensors="pt"
@@ -169,6 +169,7 @@ predictions = []
 ground_truths = []
 correct_predictions = 0
 medicine_prefix_matches = 0
+fuzzy_correct = 0
 
 # load raw labels to evaluate medicine-only matches
 raw_df = pd.read_csv(TEST_CSV)
@@ -179,8 +180,8 @@ with torch.no_grad():
         pixel_values = example["pixel_values"].unsqueeze(0).to(device)
         ground_truth = example["text"]
 
-        # Generate prediction
-        generated_ids = model.generate(pixel_values, max_length=64)
+        # Generate prediction (use beam search to improve outputs)
+        generated_ids = model.generate(pixel_values, max_length=32, num_beams=4, early_stopping=True)
         predicted_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
         predictions.append(predicted_text)
@@ -189,6 +190,13 @@ with torch.no_grad():
         # normalized exact-match
         if normalize_text(predicted_text) == normalize_text(ground_truth):
             correct_predictions += 1
+
+        # fuzzy correctness: accept small CER as correct (helps diagnose near-misses)
+        p_norm = normalize_text(predicted_text)
+        t_norm = normalize_text(ground_truth)
+        cer_sample = _levenshtein_seq(p_norm, t_norm) / (len(t_norm) if len(t_norm) > 0 else 1)
+        if cer_sample <= 0.20:
+            fuzzy_correct += 1
 
         # medicine-name prefix match (useful because labels are "MEDICINE GENERIC")
         med = med_list[idx] if idx < len(med_list) else ""
@@ -201,6 +209,7 @@ with torch.no_grad():
 # 📈 RESULTS
 # ============================================
 accuracy = (correct_predictions / len(test_dataset)) * 100
+fuzzy_accuracy = (fuzzy_correct / len(test_dataset)) * 100
 cer = calculate_cer(predictions, ground_truths)
 wer = calculate_wer(predictions, ground_truths)
 
@@ -210,6 +219,7 @@ print("="*50)
 print(f"Total samples tested: {len(test_dataset)}")
 print(f"Correct predictions: {correct_predictions}")
 print(f"Accuracy: {accuracy:.2f}%")
+print(f"Fuzzy accuracy (CER<=0.20): {fuzzy_accuracy:.2f}%")
 print(f"Character Error Rate (CER): {cer:.4f}")
 print(f"Word Error Rate (WER): {wer:.4f}")
 print("="*50 + "\n")

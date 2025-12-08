@@ -35,6 +35,16 @@ router.get('/get_pharmacy_meds/search', async (req, res)=>{
     }
 })
 
+router.get('/get_medby_id/:id', async (req, res)=>{
+    try {
+        const med_by_id = await med.get_med_by_id(req.params.id)
+
+        res.json(med_by_id).status(200)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 
 
 module.exports = router

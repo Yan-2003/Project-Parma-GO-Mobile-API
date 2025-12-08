@@ -48,6 +48,22 @@ class Medicine{
 
     }
 
+    async get_med_by_id (id) {
+        try {
+            
+            const query = await db.query(`
+                SELECT * FROM medicine_tbl WHERE id = ${id}
+            `)
+
+            console.log(query.rows)
+            return query.rows
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
 }
 
