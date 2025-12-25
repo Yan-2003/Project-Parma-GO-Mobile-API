@@ -64,6 +64,35 @@ class Medicine{
         }
     }
 
+    async get_med_pharmacy (name) {
+        try {
+            
+            const query = await db.query(`
+                SELECT DISTINCT
+                    pharma.id, 
+                    pharma.name, 
+                    pharma.longitude, 
+                    pharma.latitude 
+                FROM 
+                    medicine_tbl as med,
+                    pharmacy_tbl as pharma 
+                WHERE 
+                    med.name = '${name}' AND med.pharmacy_id = pharma.id 
+
+            `)
+
+            
+            console.log(query.rows)
+
+            return query.rows
+
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
 }
 

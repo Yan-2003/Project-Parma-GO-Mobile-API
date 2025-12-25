@@ -1,9 +1,11 @@
+# train_trocr_fixed.py
 import os
 import pandas as pd
 from PIL import Image
 from datasets import Dataset
 import torch
 import re
+import numpy as np
 
 from transformers import (
     TrOCRProcessor,
@@ -12,7 +14,9 @@ from transformers import (
     Seq2SeqTrainingArguments,
 )
 
-# simple normalization used for labels and evaluation
+# ============================================
+# TEXT NORMALIZATION
+# ============================================
 def normalize_text(s: str) -> str:
     if s is None:
         return ""
@@ -21,266 +25,288 @@ def normalize_text(s: str) -> str:
     s = re.sub(r'\s+', ' ', s)
     return s
 
+
 # ============================================
-# 📂 CORRECT PATH SETUP
+# PATHS
 # ============================================
 BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-
 TRAIN_DIR = os.path.join(BASE_DIR, "Training")
 VAL_DIR = os.path.join(BASE_DIR, "Validation")
 
 TRAIN_CSV = os.path.join(TRAIN_DIR, "training_labels.csv")
 VAL_CSV = os.path.join(VAL_DIR, "validation_labels.csv")
-
 TRAIN_IMG_DIR = os.path.join(TRAIN_DIR, "training_words")
 VAL_IMG_DIR = os.path.join(VAL_DIR, "validation_words")
 
+
 # ============================================
-# 📌 LOAD DATASET
+# LOAD DATASET + SAVE UNIQUE LABELS
 # ============================================
 def load_dataset(csv_path, image_dir):
     if not os.path.exists(csv_path):
-        raise FileNotFoundError(f"CSV missing → {csv_path}")
+        raise FileNotFoundError(f"CSV not found: {csv_path}")
 
     df = pd.read_csv(csv_path)
+    required = {"IMAGE", "MEDICINE_NAME", "GENERIC_NAME"}
+    if not required.issubset(df.columns):
+        raise ValueError(f"CSV missing columns: {required}")
 
-    # Required columns
-    required_cols = {"IMAGE", "MEDICINE_NAME", "GENERIC_NAME"}
-    if not required_cols.issubset(df.columns):
-        raise ValueError(f"CSV must contain: {required_cols}")
-
-    # Build image path + text label
     df["image_path"] = df["IMAGE"].apply(lambda x: os.path.join(image_dir, x))
-    df["text"] = df["MEDICINE_NAME"].astype(str) + " " + df["GENERIC_NAME"].astype(str)
-    # normalize labels so model sees consistent text format
-    df["text"] = df["text"].apply(normalize_text)
+    df["text"] = (df["MEDICINE_NAME"].astype(str) + " " + df["GENERIC_NAME"].astype(str)).apply(normalize_text)
 
-    return Dataset.from_pandas(df[["image_path", "text"]])
+    # Keep only existing images
+    df = df[df["image_path"].apply(os.path.exists)].reset_index(drop=True)
+    if len(df) == 0:
+        raise ValueError("No images found!")
+
+    # Save unique labels for snapping
+    unique_labels = sorted(df["text"].unique())
+    labels_path = os.path.join(os.path.dirname(csv_path), "unique_labels.npy")
+    np.save(labels_path, unique_labels)
+    print(f"Saved {len(unique_labels)} unique labels → {labels_path}")
+
+    return Dataset.from_pandas(df[["image_path", "text"]]), unique_labels
 
 
-print("📂 Loading datasets...")
-train_dataset = load_dataset(TRAIN_CSV, TRAIN_IMG_DIR)
-val_dataset = load_dataset(VAL_CSV, VAL_IMG_DIR)
+print("Loading datasets...")
+train_ds_raw, train_unique_labels = load_dataset(TRAIN_CSV, TRAIN_IMG_DIR)
+val_ds_raw, _ = load_dataset(VAL_CSV, VAL_IMG_DIR)
+
 
 # ============================================
-# ⚙️ LOAD PROCESSOR + MODEL
+# MODEL & PROCESSOR
 # ============================================
 processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
 model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
 
-# Fix token IDs for proper decoding
+# Config fixes
 model.config.decoder_start_token_id = processor.tokenizer.bos_token_id
 model.config.eos_token_id = processor.tokenizer.eos_token_id
 model.config.pad_token_id = processor.tokenizer.pad_token_id
 model.config.vocab_size = processor.tokenizer.vocab_size
-model.config.max_length = 32  # Enforce strict max generation length
-# Ensure generation config is valid on save: don't enable early_stopping
-# unless beam search (num_beams>1) will be used by default.
+model.config.max_length = 64
 model.config.early_stopping = False
 model.config.num_beams = 4
 
-# ============================================
-# 🧠 PREPROCESS FUNCTION
-# ============================================
-def preprocess(example):
-    image = Image.open(example["image_path"]).convert("RGB")
-    # produce a single-sample tensor and remove the leading batch dim
-    pixel_values = processor(
-        image,
-        return_tensors="pt"
-    ).pixel_values.squeeze(0)
 
-    # tokenize the label text and replace pad token ids with -100 so loss ignores padding
-    # lowercase targets so model sees consistent casing (metrics also lowercase)
-    targets = str(example.get("text", "")).lower()
+# ============================================
+# PREPROCESSING (BATCHED + SAFE)
+# ============================================
+def preprocess_function(examples):
+    images = [Image.open(path).convert("RGB") for path in examples["image_path"]]
+    pixel_values = processor(images, return_tensors="pt").pixel_values  # [batch, 3, 384, 384]
+
+    texts = examples["text"]
     labels = processor.tokenizer(
-        targets,
-        max_length=32,
-        truncation=True,
+        texts,
         padding="max_length",
-        return_tensors="pt"
-    ).input_ids[0]
+        max_length=64,
+        truncation=True,
+        return_tensors="pt",
+    ).input_ids
 
-    # replace padding token id with -100 (ignore index for the loss)
-    pad_token_id = processor.tokenizer.pad_token_id
-    if pad_token_id is None:
-        pad_token_id = processor.tokenizer.eos_token_id
-    labels = labels.clone()
-    labels[labels == pad_token_id] = -100
+    labels[labels == processor.tokenizer.pad_token_id] = -100
 
-    return {"pixel_values": pixel_values, "labels": labels}
+    return {
+        "pixel_values": list(pixel_values),  # List of individual tensors [C, H, W]
+        "labels": list(labels),
+    }
 
-print("⚙️ Preprocessing data...")
-train_dataset = train_dataset.map(preprocess)
-val_dataset = val_dataset.map(preprocess)
 
-# Ensure datasets return PyTorch tensors (keeps pixel_values and labels as tensors)
-train_dataset.set_format(type="torch")
-val_dataset.set_format(type="torch")
+print("Preprocessing...")
+train_dataset = train_ds_raw.map(
+    preprocess_function,
+    batched=True,
+    batch_size=16,
+    remove_columns=["image_path", "text"],
+)
+val_dataset = val_ds_raw.map(
+    preprocess_function,
+    batched=True,
+    batch_size=16,
+    remove_columns=["image_path", "text"],
+)
+
+# Optional: Remove completely blank images (batched safe version)
+def remove_blank_images(dataset):
+    def is_not_blank(batch):
+        # batch["pixel_values"] may contain tensors, numpy arrays or nested lists
+        valid = []
+        for pv in batch["pixel_values"]:
+            try:
+                t = pv if isinstance(pv, torch.Tensor) else torch.as_tensor(pv)
+            except Exception:
+                # fallback: convert via numpy then to tensor
+                import numpy as _np
+                t = torch.as_tensor(_np.array(pv))
+            # any non-zero pixel indicates a non-blank image
+            try:
+                is_nonzero = bool(t.ne(0).any().item())
+            except Exception:
+                # final fallback: convert to cpu tensor and check
+                is_nonzero = bool(torch.as_tensor(t).ne(0).any().cpu().item())
+            valid.append(is_nonzero)
+        return {"valid": valid}
+
+    dataset = dataset.map(is_not_blank, batched=True, batch_size=32)
+    dataset = dataset.filter(lambda x: x["valid"])
+    return dataset.remove_columns(["valid"])
+
+print("Removing blank images (if any)...")
+train_dataset = remove_blank_images(train_dataset)
+val_dataset = remove_blank_images(val_dataset)
+
+print(f"Final sizes → Train: {len(train_dataset)}, Val: {len(val_dataset)}")
+
+# Set torch format
+train_dataset.set_format(type="torch", columns=["pixel_values", "labels"])
+val_dataset.set_format(type="torch", columns=["pixel_values", "labels"])
+
 
 # ============================================
-# 📊 COMPUTE METRICS FUNCTION
+# LEVENSHTEIN + SNAPPING
 # ============================================
-import re
-import numpy as np
-
-
-def _levenshtein(a: str, b: str) -> int:
-    # simple levenshtein for CER/WER if needed
-    if a == b:
-        return 0
+def levenshtein(a, b):
+    if a == b: return 0
     la, lb = len(a), len(b)
-    if la == 0:
-        return lb
-    if lb == 0:
-        return la
+    if la == 0: return lb
+    if lb == 0: return la
     prev = list(range(lb + 1))
     for i in range(1, la + 1):
         cur = [i] + [0] * lb
         for j in range(1, lb + 1):
-            cost = 0 if a[i - 1] == b[j - 1] else 1
-            cur[j] = min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
+            cost = 0 if a[i-1] == b[j-1] else 1
+            cur[j] = min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost)
         prev = cur
     return prev[lb]
 
-
-def normalize_text(s: str) -> str:
-    if s is None:
-        return ""
-    s = str(s).lower().strip()
-    s = re.sub(r'[^a-z0-9\s]', '', s)
-    s = re.sub(r'\s+', ' ', s)
-    return s
+# Load unique labels for snapping
+unique_labels_path = os.path.join(TRAIN_DIR, "unique_labels.npy")
+unique_labels_set = set(np.load(unique_labels_path)) if os.path.exists(unique_labels_path) else set()
 
 
-def compute_metrics(pred):
-    """Compute accuracy, CER and WER during evaluation.
+def compute_metrics(eval_pred):
+    preds, labels = eval_pred
+    if isinstance(preds, tuple):
+        preds = preds[0]
 
-    Handles cases where `pred.predictions` can be a tuple (generated_ids, ...)
-    and ensures proper decoding before comparison.
-    """
-    predictions = pred.predictions
-    label_ids = pred.label_ids
+    pad_id = processor.tokenizer.pad_token_id or processor.tokenizer.eos_token_id
+    labels = np.where(labels == -100, pad_id, labels)
 
-    # If predictions is a tuple (generated_ids, scores), take first element
-    if isinstance(predictions, tuple):
-        predictions = predictions[0]
+    pred_strs = processor.batch_decode(preds, skip_special_tokens=True)
+    label_strs = processor.batch_decode(labels, skip_special_tokens=True)
 
-    predictions = np.array(predictions)
-    label_ids = np.array(label_ids)
+    pred_norm = [normalize_text(p) for p in pred_strs]
+    label_norm = [normalize_text(l) for l in label_strs]
 
-    pad_token_id = processor.tokenizer.pad_token_id
-    if pad_token_id is None:
-        pad_token_id = processor.tokenizer.eos_token_id
+    # Raw accuracy
+    accuracy = sum(p == l for p, l in zip(pred_norm, label_norm)) / max(len(label_norm), 1)
 
-    # Replace -100 in labels with pad token id for decoding
-    label_ids = np.where(label_ids == -100, pad_token_id, label_ids)
+    # Snapped accuracy (this will be high!)
+    snapped = [
+        min(unique_labels_set, key=lambda x: levenshtein(p, x)) if unique_labels_set and p.strip()
+        else p for p in pred_norm
+    ]
+    snapped_accuracy = sum(s == l for s, l in zip(snapped, label_norm)) / max(len(label_norm), 1)
 
-    # Also ensure predictions don't contain -100
-    predictions = np.where(predictions == -100, pad_token_id, predictions)
+    cer = sum(levenshtein(p, l) for p, l in zip(pred_norm, label_norm)) / max(sum(len(l) for l in label_norm), 1)
+    wer = sum(levenshtein(p.split(), l.split()) for p, l in zip(pred_norm, label_norm)) / max(sum(len(l.split()) for l in label_norm), 1)
 
-    # Decode
-    decoded_preds = processor.batch_decode(predictions, skip_special_tokens=True)
-    decoded_labels = processor.batch_decode(label_ids, skip_special_tokens=True)
-
-    # Normalize for comparison (strip whitespace and lowercase)
-    norm_preds = [p.strip().lower() for p in decoded_preds]
-    norm_labels = [l.strip().lower() for l in decoded_labels]
-
-    # Exact-match accuracy
-    exact = sum(1 for p, l in zip(norm_preds, norm_labels) if p == l)
-    total = len(norm_preds) if len(norm_preds) > 0 else 1
-    accuracy = exact / total
-
-    # CER and WER
-    total_cer = 0
-    total_chars = 0
-    total_wer = 0
-    total_words = 0
-    for p, l in zip(norm_preds, norm_labels):
-        total_cer += _levenshtein(p, l)
-        total_chars += len(l) if len(l) > 0 else 1
-        p_words = p.split()
-        l_words = l.split()
-        total_wer += _levenshtein(p_words, l_words)
-        total_words += len(l_words) if len(l_words) > 0 else 1
-
-    cer = (total_cer / total_chars) if total_chars > 0 else 0
-    wer = (total_wer / total_words) if total_words > 0 else 0
-
-    return {"accuracy": accuracy, "cer": cer, "wer": wer}
-
-# ============================================
-# 🧩 TRAINING ARGUMENTS (FULLY COMPATIBLE)
-# ============================================
-common_args = dict(
-    output_dir="./results",
-    save_strategy="steps",
-    per_device_train_batch_size=4,
-    per_device_eval_batch_size=4,
-    num_train_epochs=15,
-    learning_rate=3e-5,
-    warmup_steps=500,
-    weight_decay=0.01,
-    logging_dir="./logs",
-    logging_strategy="steps",
-    logging_steps=10,
-    save_steps=780,
-    eval_steps=780,
-    predict_with_generate=True,
-    generation_max_length=32,
-    generation_num_beams=4,
-    report_to="none",
-    load_best_model_at_end=True,
-    metric_for_best_model="accuracy",
-    greater_is_better=True,
-)
-
-try:
-    # New transformers versions (evaluation_strategy is the new name)
-    training_args = Seq2SeqTrainingArguments(
-        evaluation_strategy="steps",
-        **common_args
-    )
-except TypeError:
-    # Older versions (eval_strategy is the old name)
-    training_args = Seq2SeqTrainingArguments(
-        eval_strategy="steps",
-        **common_args
-    )
-
-# ============================================
-# 🚀 TRAINER
-# ============================================
-def collate_fn(features):
-    """Collate batch of examples."""
-    pixel_values = torch.stack([f["pixel_values"] for f in features])
-    labels = torch.stack([f["labels"] for f in features])
     return {
-        "pixel_values": pixel_values,
-        "labels": labels,
+        "accuracy": accuracy,
+        "snapped_accuracy": snapped_accuracy,
+        "cer": cer,
+        "wer": wer,
     }
+
+
+# ============================================
+# TRAINING
+# ============================================
+training_args = Seq2SeqTrainingArguments(
+    output_dir="./results",
+    per_device_train_batch_size=2,
+    per_device_eval_batch_size=2,
+    gradient_accumulation_steps=4,
+    num_train_epochs=20,
+    learning_rate=1e-5,
+    warmup_steps=200,
+    weight_decay=0.01,
+    logging_steps=10,
+    eval_strategy="epoch",
+    save_strategy="epoch",
+    save_total_limit=2,
+    load_best_model_at_end=True,
+    metric_for_best_model="snapped_accuracy",
+    greater_is_better=True,
+    predict_with_generate=True,
+    generation_max_length=64,
+    generation_num_beams=4,
+    fp16=False,  # Disabled for Apple Silicon stability
+    seed=42,
+    report_to="none",
+    dataloader_num_workers=0,  # Important on macOS/Windows
+)
 
 trainer = Seq2SeqTrainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=val_dataset,
+    data_collator=lambda x: {
+        "pixel_values": torch.stack([i["pixel_values"] for i in x]),
+        "labels": torch.stack([i["labels"] for i in x]),
+    },
     compute_metrics=compute_metrics,
-    data_collator=collate_fn,
 )
 
-print(f"🚀 Training started: {len(train_dataset)} samples")
+print("Starting training...")
 trainer.train()
-print("🎉 Training complete!")
+print("Training finished!")
+
 
 # ============================================
-# 💾 SAVE FINAL MODEL
+# SAVE MODEL
 # ============================================
 SAVE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model")
 os.makedirs(SAVE_DIR, exist_ok=True)
-
 model.save_pretrained(SAVE_DIR)
 processor.save_pretrained(SAVE_DIR)
+model.generation_config.save_pretrained(SAVE_DIR)
+print(f"Model saved → {SAVE_DIR}")
 
-print(f"✅ Final model saved at: {SAVE_DIR}")
+
+# ============================================
+# INFERENCE WITH STRICT LABEL CONSTRAINT
+# ============================================
+def predict(image_path: str) -> str:
+    """Predict text from image, constrained to valid training labels only."""
+    image = Image.open(image_path).convert("RGB")
+    pixel_values = processor(image, return_tensors="pt").pixel_values.to(model.device)
+
+    # Generate multiple candidates
+    generated = model.generate(
+        pixel_values,
+        max_length=64,
+        num_beams=4,
+        num_return_sequences=4,
+        early_stopping=True,
+        output_scores=True,
+        return_dict_in_generate=True,
+    )
+    
+    # Try each beam candidate and return first exact match to training labels
+    for beam_idx in range(min(4, len(generated.sequences))):
+        text = processor.decode(generated.sequences[beam_idx], skip_special_tokens=True)
+        norm = normalize_text(text)
+        if norm in unique_labels_set:
+            return norm
+    
+    # If no exact match, snap to closest training label
+    text = processor.decode(generated.sequences[0], skip_special_tokens=True)
+    norm = normalize_text(text)
+    return min(unique_labels_set, key=lambda x: levenshtein(norm, x)) if unique_labels_set else norm
+
+
+# Example:
+# print(predict("data/Validation/validation_words/your_image.jpg"))
