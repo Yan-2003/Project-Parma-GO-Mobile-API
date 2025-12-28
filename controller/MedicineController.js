@@ -20,22 +20,34 @@ class Medicine{
             
             const query = await db.query(`
                 SELECT 
-                med.id as id,
-                med.name as name,
-                med.dosage_form as dosage_form,
-                med.strength as strength,
-                med.description as description,
-                med.price as price,
-                med.stock as price,
-                med.expiration_date as expiration_date,
-                pharma.name as pharma_name,
-                pharma.latitude as latitude,
-                pharma.longitude as longitude,
-                pharma.address as address
-                FROM medicine_tbl as med , pharmacy_tbl as pharma 
-                WHERE LOWER(med.name) LIKE LOWER('${input}%') AND med.pharmacy_id = pharma.id
-                                
-            `) 
+                    med.id,
+                    med.name,
+                    med.dosage_form,
+                    med.strength,
+                    med.description,
+                    med.price,
+                    med.stock,
+                    med.expiration_date,
+                    pharma.name AS pharma_name,
+                    pharma.latitude,
+                    pharma.longitude,
+                    pharma.address,
+                    similarity(LOWER(med.name), LOWER($1)) AS score
+                FROM medicine_tbl med
+                JOIN pharmacy_tbl pharma ON med.pharmacy_id = pharma.id
+                WHERE 
+                    -- fuzzy match for typos
+                    similarity(LOWER(med.name), LOWER($1)) > 0.2
+
+                    -- partial match for short queries like "a" or "ace"
+                    OR LOWER(med.name) ILIKE '%' || LOWER($1) || '%'
+
+                    -- optional: also search brand or descriptions
+                    OR LOWER(med.brand) ILIKE '%' || LOWER($1) || '%'
+                    OR LOWER(med.description) ILIKE '%' || LOWER($1) || '%'
+                ORDER BY score DESC, med.name ASC
+            `, [input]);
+            
             console.log(query)
             console.log(query.rows)
 
