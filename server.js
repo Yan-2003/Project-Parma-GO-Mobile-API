@@ -9,6 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 const PharmacyRouter = require("./routes/PharmacyRouter")
 const MedicineRouter = require('./routes/MedicineRotuer')
 const UserRouter = require('./routes/UserRouter')
+const DashboardRouter = require('./routes/DashboardRouter')
 
 
 const PORT = process.env.PORT || 8000;
@@ -73,6 +74,7 @@ app.post('/ocr', upload.single('image'), (req, res) => {
 app.use('/pharmacy', PharmacyRouter)
 app.use('/medicine', MedicineRouter)
 app.use('/user', UserRouter)
+app.use('/dashboard', DashboardRouter)
 
 
 app.listen(PORT, () => {
