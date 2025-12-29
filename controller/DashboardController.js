@@ -19,6 +19,22 @@ class DashboardController{
 
     }
 
+
+    async get_all_pharma_count () {
+
+        try {
+            const query = await db.query(
+                `
+                    SELECT COUNT(name) count_pharma FROM pharmacy_tbl
+                `
+            )
+
+
+            return query.rows
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }
 
 module.exports = DashboardController
