@@ -27,5 +27,14 @@ router.get('/get_all_pharma_count', async (req ,res)=>{
     }
 })
 
+router.get('/get_all_open_pharma_count', async (req, res) =>{
+    try {
+        const Dashboard = new DashboardController()
+        return res.json(await Dashboard.get_all_open_pharma_count()).status
+    } catch (error) {
+        console.log(error)
+    }
+} )
+
 
 module.exports = router
