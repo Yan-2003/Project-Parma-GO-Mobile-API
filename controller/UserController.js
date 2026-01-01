@@ -8,7 +8,7 @@ class User{
     async add_user(username, name, user_role, password){
 
         try {
-            const salt = 20
+            const salt = 10
     
             const hash_password = await bcrypt.hash(password, salt)
 
