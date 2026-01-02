@@ -105,6 +105,35 @@ class Medicine{
         }
     }
 
+    async add_medicine (data) {
+        try {
+
+            console.log("Data to be inserted: ", data)
+
+
+
+            const formatDate = (date) => {
+                const yyyy = date.getFullYear()
+                const mm = String(date.getMonth() + 1).padStart(2, '0')
+                const dd = String(date.getDate()).padStart(2, '0')
+                return `${yyyy}-${mm}-${dd}`
+            }
+
+
+            const query = await db.query(
+                `
+                    INSERT INTO medicine_tbl(name, description, brand , dosage_form, strength, price, stock, pharmacy_id, expiration_date, created_at)  
+                    VALUES('${data.name}', '${data.description}', '${data.brand}', '${data.dosage_form}', '${data.strength}', ${data.price}, ${data.stock}, ${data.pharmacy_id}, '${formatDate(new Date(data.expiration_date))}', NOW())
+                `
+            )
+
+            console.log(query)
+            return query.command
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
 }
 

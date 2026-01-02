@@ -56,6 +56,22 @@ router.get('/get_meds_pharma/:name', async ( req, res) =>{
     }
 })
 
+router.post('/add_medicine', async (req, res)=>{
+    try {
+
+        const data = req.body
+
+        console.log(data)
+
+        const add_med = await med.add_medicine(req.body)
+
+        res.json({message : "POST added medicine", data  : add_med}).json(200)
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 
 
 module.exports = router
