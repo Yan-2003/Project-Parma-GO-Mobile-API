@@ -68,7 +68,7 @@ router.post('/add_medicine', async (req, res)=>{
 
         const add_med = await med.add_medicine(req.body)
 
-        res.json({message : "POST added medicine", data  : add_med}).json(200)
+        res.json({message : "POST added medicine", data  : add_med}).status(200)
 
     } catch (error) {
         console.log(error)
@@ -82,6 +82,36 @@ router.get('/get_all_medicine', async (req, res)=>{
         const all_medicine = await med.get_all_medicine()
         res.json(all_medicine).status(200)
         
+    } catch (error) {
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+})
+
+router.post('/update_medicine', async (req, res)=>{
+    try {
+
+        const data = req.body
+
+        console.log(data)
+
+        const update = await med.update_medicine(req.body)
+
+        res.json({message : "POST updated medicine", data  : update}).status(200)
+
+    } catch (error) {
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+
+})
+
+router.delete('/delete_medicine/:id', async (req, res)=>{
+    try {
+        const delete_med = await med.delete_medicine(req.params.id)
+
+        res.json({message : "DELETE medicine", data  :delete_med}).status(200)
+
     } catch (error) {
         console.log(error)
         res.json({ error : error }).status(500)

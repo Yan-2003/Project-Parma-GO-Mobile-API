@@ -1,6 +1,15 @@
 const db = require('../database/DB')
 
+const formatDate = (date) => {
+    const yyyy = date.getFullYear()
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const dd = String(date.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+}
+
+
 class Medicine{
+
 
     async get_pharmacy_medicine(pharmacy_id){
         try {
@@ -112,12 +121,7 @@ class Medicine{
 
 
 
-            const formatDate = (date) => {
-                const yyyy = date.getFullYear()
-                const mm = String(date.getMonth() + 1).padStart(2, '0')
-                const dd = String(date.getDate()).padStart(2, '0')
-                return `${yyyy}-${mm}-${dd}`
-            }
+
 
 
             const query = await db.query(
@@ -148,6 +152,42 @@ class Medicine{
         }
 
 
+    }
+
+    async update_medicine (data) {
+        try {
+            const query = await db.query(
+                `
+                    UPDATE medicine_tbl
+                    SET name='${data.name}', description='${data.description}', brand='${data.brand}' , dosage_form='${data.dosage_form}', strength='${data.strength}', price=${data.price}, stock=${data.stock}, pharmacy_id=${data.pharmacy_id}, expiration_date='${formatDate(new Date(data.expiration_date))}'
+                    WHERE id = ${data.id}
+
+                `
+            )  
+
+            console.log(query)
+
+            return query.command
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async delete_medicine (id) { 
+        try {
+            const query = await db.query(
+                `
+                    DELETE FROM medicine_tbl WHERE id=${id}
+                `
+            )
+
+            console.log(query)
+
+            return query.command
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 
