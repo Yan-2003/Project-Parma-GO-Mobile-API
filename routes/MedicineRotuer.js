@@ -32,6 +32,7 @@ router.get('/get_pharmacy_meds/search', async (req, res)=>{
 
     } catch (error) {
         console.log(error)
+        res.json({ error : error }).status(500)
     }
 })
 
@@ -42,6 +43,7 @@ router.get('/get_medby_id/:id', async (req, res)=>{
         res.json(med_by_id).status(200)
     } catch (error) {
         console.log(error)
+        res.json({ error : error }).status(500)
     }
 })
 
@@ -53,6 +55,7 @@ router.get('/get_meds_pharma/:name', async ( req, res) =>{
 
     } catch (error) {   
         console.log(error)
+        res.json({ error : error }).status(500)
     }
 })
 
@@ -69,9 +72,21 @@ router.post('/add_medicine', async (req, res)=>{
 
     } catch (error) {
         console.log(error)
+        res.json({ error : error }).status(500)
     }
 })
 
+
+router.get('/get_all_medicine', async (req, res)=>{
+    try {
+        const all_medicine = await med.get_all_medicine()
+        res.json(all_medicine).status(200)
+        
+    } catch (error) {
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+})
 
 
 module.exports = router

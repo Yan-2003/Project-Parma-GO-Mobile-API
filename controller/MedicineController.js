@@ -134,6 +134,22 @@ class Medicine{
         }
     }
 
+    async get_all_medicine (){
+
+        try {
+            const query = await db.query(
+                `
+                    SELECT * FROM medicine_tbl
+                `
+            )
+            return query.rows
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }
+
 
 }
 
