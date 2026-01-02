@@ -45,8 +45,17 @@ router.get("/get_pharmacies", async (req, res)=>{
     }
 })
 
-router.get('/home', async ( req, res)=>{
-    
+router.get('/get_pharmacy_by_id/:id', async ( req, res)=>{
+    try {
+        
+        const Pharmacy = new PharmacyController()
+        const result = await Pharmacy.get_pharamcy_by_id(req.params.id)
+        res.json(result).status(200)
+
+    } catch (error) {
+        console.log(error)
+        res.json({error : error}).status(500)
+    }
 })
 
 

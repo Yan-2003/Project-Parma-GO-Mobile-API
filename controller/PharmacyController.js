@@ -24,6 +24,20 @@ class Pharmacy{
         
     }
 
+    async get_pharamcy_by_id (id) {
+        try {
+            const query = await db.query(
+                `
+                    SELECT * FROM pharmacy_tbl WHERE id=${id}
+                `
+            )
+            console.log(query.rows)
+            return query.rows
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
 
 
