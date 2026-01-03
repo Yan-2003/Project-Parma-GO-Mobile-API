@@ -154,6 +154,23 @@ class Medicine{
 
     }
 
+
+    async get_all_medicine_filter_pharmacy (id){
+
+        try {
+            const query = await db.query(
+                `
+                    SELECT * FROM medicine_tbl WHERE pharmacy_id=${id}
+                `
+            )
+            return query.rows
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }
+
     async update_medicine (data) {
         try {
             const query = await db.query(

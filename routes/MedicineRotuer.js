@@ -88,6 +88,17 @@ router.get('/get_all_medicine', async (req, res)=>{
     }
 })
 
+router.get('/get_all_medicine/:id', async (req, res)=>{
+    try {
+        const all_medicine = await med.get_all_medicine_filter_pharmacy(req.params.id)
+        res.json(all_medicine).status(200)
+        
+    } catch (error) {
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+})
+
 router.post('/update_medicine', async (req, res)=>{
     try {
 
