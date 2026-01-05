@@ -11,7 +11,7 @@ aceta paracetamol,aceta paracetamol,True
 aceta paracetamol,ace paracetamol,False
 ace paracetamol,ace paracetamol,True
 ace paracetamol,ace paracetamol,True
-ace paracetamol,lucanr fluconazole,False
+ace paracetamol,conaz fluconazole,False
 ace paracetamol,ace paracetamol,True
 ace paracetamol,ace paracetamol,True
 ace paracetamol,ace paracetamol,True
@@ -24,9 +24,9 @@ alatrol cetirizine hydrochloride,alatrol cetirizine hydrochloride,True
 alatrol cetirizine hydrochloride,alatrol cetirizine hydrochloride,True
 alatrol cetirizine hydrochloride,alatrol cetirizine hydrochloride,True
 alatrol cetirizine hydrochloride,alatrol cetirizine hydrochloride,True
-alatrol cetirizine hydrochloride,ace paracetamol,False
-alatrol cetirizine hydrochloride,maxpro esomeprazole,False
-alatrol cetirizine hydrochloride,maxpro esomeprazole,False
+alatrol cetirizine hydrochloride,backtone baclofen,False
+alatrol cetirizine hydrochloride,metro metronidazole,False
+alatrol cetirizine hydrochloride,metro metronidazole,False
 alatrol cetirizine hydrochloride,alatrol cetirizine hydrochloride,True
 alatrol cetirizine hydrochloride,alatrol cetirizine hydrochloride,True
 amodis metronidazole,amodis metronidazole,True
@@ -63,7 +63,7 @@ azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
 azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
 azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
 azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
-azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
+azithrocin azithromycin dihydrate,zithrin azithromycin dihydrate,False
 azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
 azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
 azithrocin azithromycin dihydrate,azithrocin azithromycin dihydrate,True
@@ -81,14 +81,14 @@ azyth azithromycin dihydrate,azyth azithromycin dihydrate,True
 azyth azithromycin dihydrate,azyth azithromycin dihydrate,True
 az azithromycin dihydrate,az azithromycin dihydrate,True
 az azithromycin dihydrate,az azithromycin dihydrate,True
-az azithromycin dihydrate,azyth azithromycin dihydrate,False
+az azithromycin dihydrate,renova paracetamol,False
 az azithromycin dihydrate,az azithromycin dihydrate,True
 az azithromycin dihydrate,az azithromycin dihydrate,True
-az azithromycin dihydrate,azyth azithromycin dihydrate,False
-az azithromycin dihydrate,azyth azithromycin dihydrate,False
-az azithromycin dihydrate,azyth azithromycin dihydrate,False
-az azithromycin dihydrate,azyth azithromycin dihydrate,False
-az azithromycin dihydrate,azyth azithromycin dihydrate,False
+az azithromycin dihydrate,renova paracetamol,False
+az azithromycin dihydrate,renova paracetamol,False
+az azithromycin dihydrate,renova paracetamol,False
+az azithromycin dihydrate,renova paracetamol,False
+az azithromycin dihydrate,renova paracetamol,False
 bacaid baclofen,bacaid baclofen,True
 bacaid baclofen,bacaid baclofen,True
 bacaid baclofen,bacaid baclofen,True
@@ -105,8 +105,8 @@ backtone baclofen,backtone baclofen,True
 backtone baclofen,backtone baclofen,True
 backtone baclofen,backtone baclofen,True
 backtone baclofen,backtone baclofen,True
-backtone baclofen,baclon baclofen,False
-backtone baclofen,baclon baclofen,False
+backtone baclofen,backtone baclofen,True
+backtone baclofen,backtone baclofen,True
 backtone baclofen,baclofen baclofen,False
 backtone baclofen,backtone baclofen,True
 baclofen baclofen,baclon baclofen,False
@@ -132,7 +132,7 @@ baclon baclofen,baclon baclofen,True
 bacmax baclofen,bacmax baclofen,True
 bacmax baclofen,bacmax baclofen,True
 bacmax baclofen,bacmax baclofen,True
-bacmax baclofen,diflu fluconazole,False
+bacmax baclofen,conaz fluconazole,False
 bacmax baclofen,baclon baclofen,False
 bacmax baclofen,bacmax baclofen,True
 bacmax baclofen,bacmax baclofen,True
@@ -144,7 +144,7 @@ beklo baclofen,beklo baclofen,True
 beklo baclofen,beklo baclofen,True
 beklo baclofen,beklo baclofen,True
 beklo baclofen,beklo baclofen,True
-beklo baclofen,flugal fluconazole,False
+beklo baclofen,napa extend paracetamol,False
 beklo baclofen,beklo baclofen,True
 beklo baclofen,beklo baclofen,True
 beklo baclofen,beklo baclofen,True
@@ -152,13 +152,13 @@ beklo baclofen,beklo baclofen,True
 bicozin vitamin b complex zinc,etizin cetirizine hydrochloride,False
 bicozin vitamin b complex zinc,baclon baclofen,False
 bicozin vitamin b complex zinc,etizin cetirizine hydrochloride,False
-bicozin vitamin b complex zinc,bacaid baclofen,False
+bicozin vitamin b complex zinc,baclon baclofen,False
 bicozin vitamin b complex zinc,etizin cetirizine hydrochloride,False
-bicozin vitamin b complex zinc,bacaid baclofen,False
-bicozin vitamin b complex zinc,bacaid baclofen,False
-bicozin vitamin b complex zinc,bacaid baclofen,False
-bicozin vitamin b complex zinc,bacaid baclofen,False
-bicozin vitamin b complex zinc,azyth azithromycin dihydrate,False
+bicozin vitamin b complex zinc,baclon baclofen,False
+bicozin vitamin b complex zinc,baclon baclofen,False
+bicozin vitamin b complex zinc,baclon baclofen,False
+bicozin vitamin b complex zinc,baclon baclofen,False
+bicozin vitamin b complex zinc,az azithromycin dihydrate,False
 canazole fluconazole,canazole fluconazole,True
 canazole fluconazole,canazole fluconazole,True
 canazole fluconazole,canazole fluconazole,True
@@ -172,23 +172,23 @@ canazole fluconazole,canazole fluconazole,True
 candinil fluconazole,candinil fluconazole,True
 candinil fluconazole,candinil fluconazole,True
 candinil fluconazole,candinil fluconazole,True
-candinil fluconazole,denixil clonazepam,False
 candinil fluconazole,candinil fluconazole,True
 candinil fluconazole,candinil fluconazole,True
 candinil fluconazole,candinil fluconazole,True
 candinil fluconazole,candinil fluconazole,True
 candinil fluconazole,candinil fluconazole,True
-candinil fluconazole,denixil clonazepam,False
-cetisoft cetirizine hydrochloride,disopan clonazepam,False
+candinil fluconazole,candinil fluconazole,True
+candinil fluconazole,candinil fluconazole,True
+cetisoft cetirizine hydrochloride,filmet metronidazole,False
 cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
 cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
 cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
 cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
-cetisoft cetirizine hydrochloride,disopan clonazepam,False
+cetisoft cetirizine hydrochloride,filmet metronidazole,False
 cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
+cetisoft cetirizine hydrochloride,metro metronidazole,False
 cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
-cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
-cetisoft cetirizine hydrochloride,cetisoft cetirizine hydrochloride,True
+cetisoft cetirizine hydrochloride,metro metronidazole,False
 conaz fluconazole,conaz fluconazole,True
 conaz fluconazole,conaz fluconazole,True
 conaz fluconazole,conaz fluconazole,True
@@ -278,32 +278,32 @@ etizin cetirizine hydrochloride,etizin cetirizine hydrochloride,True
 etizin cetirizine hydrochloride,etizin cetirizine hydrochloride,True
 etizin cetirizine hydrochloride,metsina metronidazole,False
 etizin cetirizine hydrochloride,az azithromycin dihydrate,False
-etizin cetirizine hydrochloride,az azithromycin dihydrate,False
+etizin cetirizine hydrochloride,rozith azithromycin dihydrate,False
 exium esomeprazole,exium esomeprazole,True
-exium esomeprazole,mkast montelukast sodium,False
-exium esomeprazole,exium esomeprazole,True
-exium esomeprazole,exium esomeprazole,True
+exium esomeprazole,monas montelukast sodium,False
 exium esomeprazole,exium esomeprazole,True
 exium esomeprazole,exium esomeprazole,True
 exium esomeprazole,exium esomeprazole,True
-exium esomeprazole,mkast montelukast sodium,False
+exium esomeprazole,exium esomeprazole,True
+exium esomeprazole,exium esomeprazole,True
+exium esomeprazole,monas montelukast sodium,False
 exium esomeprazole,exium esomeprazole,True
 exium esomeprazole,exium esomeprazole,True
 fenadin fexofenadine hydrochloride,fenadin fexofenadine hydrochloride,True
 fenadin fexofenadine hydrochloride,fexo fexofenadine hydrochloride,False
 fenadin fexofenadine hydrochloride,fenadin fexofenadine hydrochloride,True
 fenadin fexofenadine hydrochloride,fenadin fexofenadine hydrochloride,True
-fenadin fexofenadine hydrochloride,denixil clonazepam,False
+fenadin fexofenadine hydrochloride,metsina metronidazole,False
 fenadin fexofenadine hydrochloride,fenadin fexofenadine hydrochloride,True
 fenadin fexofenadine hydrochloride,fenadin fexofenadine hydrochloride,True
-fenadin fexofenadine hydrochloride,denixil clonazepam,False
+fenadin fexofenadine hydrochloride,ketotab ketoconazole tablet,False
 fenadin fexofenadine hydrochloride,fexo fexofenadine hydrochloride,False
 fenadin fexofenadine hydrochloride,fenadin fexofenadine hydrochloride,True
 fexofast fexofenadine hydrochloride,renova paracetamol,False
 fexofast fexofenadine hydrochloride,renova paracetamol,False
 fexofast fexofenadine hydrochloride,renova paracetamol,False
 fexofast fexofenadine hydrochloride,renova paracetamol,False
-fexofast fexofenadine hydrochloride,renova paracetamol,False
+fexofast fexofenadine hydrochloride,nexcap esomeprazole,False
 fexofast fexofenadine hydrochloride,renova paracetamol,False
 fexofast fexofenadine hydrochloride,renova paracetamol,False
 fexofast fexofenadine hydrochloride,fexofast fexofenadine hydrochloride,True
@@ -360,11 +360,11 @@ flexibac baclofen,flexibac baclofen,True
 flexibac baclofen,flexibac baclofen,True
 flexibac baclofen,flexibac baclofen,True
 flexilax baclofen,flexilax baclofen,True
-flexilax baclofen,fexo fexofenadine hydrochloride,False
+flexilax baclofen,fixal fexofenadine hydrochloride,False
 flexilax baclofen,flexilax baclofen,True
 flexilax baclofen,fexo fexofenadine hydrochloride,False
 flexilax baclofen,flexilax baclofen,True
-flexilax baclofen,fexo fexofenadine hydrochloride,False
+flexilax baclofen,fixal fexofenadine hydrochloride,False
 flexilax baclofen,flexilax baclofen,True
 flexilax baclofen,flexilax baclofen,True
 flexilax baclofen,flexilax baclofen,True
@@ -382,27 +382,27 @@ flugal fluconazole,flugal fluconazole,True
 ketocon ketoconazole shampoo,metro metronidazole,False
 ketocon ketoconazole shampoo,ketotab ketoconazole tablet,False
 ketocon ketoconazole shampoo,metro metronidazole,False
-ketocon ketoconazole shampoo,esoral esomeprazole,False
-ketocon ketoconazole shampoo,lucanr fluconazole,False
-ketocon ketoconazole shampoo,lucanr fluconazole,False
-ketocon ketoconazole shampoo,esoral esomeprazole,False
-ketocon ketoconazole shampoo,lucanr fluconazole,False
-ketocon ketoconazole shampoo,lucanr fluconazole,False
+ketocon ketoconazole shampoo,nexcap esomeprazole,False
+ketocon ketoconazole shampoo,metsina metronidazole,False
+ketocon ketoconazole shampoo,metsina metronidazole,False
+ketocon ketoconazole shampoo,nexcap esomeprazole,False
+ketocon ketoconazole shampoo,metsina metronidazole,False
+ketocon ketoconazole shampoo,metsina metronidazole,False
 ketocon ketoconazole shampoo,ketotab ketoconazole tablet,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
-ketoral ketoconazole tablet,flugal fluconazole,False
-ketoral ketoconazole tablet,flugal fluconazole,False
-ketoral ketoconazole tablet,flugal fluconazole,False
+ketoral ketoconazole tablet,conaz fluconazole,False
+ketoral ketoconazole tablet,conaz fluconazole,False
+ketoral ketoconazole tablet,conaz fluconazole,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
 ketoral ketoconazole tablet,esoral esomeprazole,False
-ketotab ketoconazole tablet,renova paracetamol,False
+ketotab ketoconazole tablet,ketotab ketoconazole tablet,True
 ketotab ketoconazole tablet,ketozol ketoconazole shampoo,False
 ketotab ketoconazole tablet,metro metronidazole,False
-ketotab ketoconazole tablet,renova paracetamol,False
+ketotab ketoconazole tablet,ketotab ketoconazole tablet,True
 ketotab ketoconazole tablet,ketotab ketoconazole tablet,True
 ketotab ketoconazole tablet,metro metronidazole,False
 ketotab ketoconazole tablet,metro metronidazole,False
@@ -438,7 +438,7 @@ lucanr fluconazole,lucanr fluconazole,True
 lucanr fluconazole,lucanr fluconazole,True
 lucanr fluconazole,lucanr fluconazole,True
 lucanr fluconazole,lucanr fluconazole,True
-lucanr fluconazole,lucanr fluconazole,True
+lucanr fluconazole,leptic clonazepam,False
 lumona montelukast sodium,lumona montelukast sodium,True
 lumona montelukast sodium,lumona montelukast sodium,True
 lumona montelukast sodium,lumona montelukast sodium,True
@@ -451,13 +451,13 @@ lumona montelukast sodium,lumona montelukast sodium,True
 lumona montelukast sodium,lumona montelukast sodium,True
 mkast montelukast sodium,omastin fluconazole,False
 mkast montelukast sodium,mkast montelukast sodium,True
+mkast montelukast sodium,canazole fluconazole,False
+mkast montelukast sodium,mkast montelukast sodium,True
+mkast montelukast sodium,canazole fluconazole,False
 mkast montelukast sodium,mkast montelukast sodium,True
 mkast montelukast sodium,mkast montelukast sodium,True
 mkast montelukast sodium,mkast montelukast sodium,True
-mkast montelukast sodium,mkast montelukast sodium,True
-mkast montelukast sodium,mkast montelukast sodium,True
-mkast montelukast sodium,mkast montelukast sodium,True
-mkast montelukast sodium,mkast montelukast sodium,True
+mkast montelukast sodium,canazole fluconazole,False
 mkast montelukast sodium,mkast montelukast sodium,True
 maxima esomeprazole,maxima esomeprazole,True
 maxima esomeprazole,maxima esomeprazole,True
@@ -471,7 +471,7 @@ maxima esomeprazole,maxima esomeprazole,True
 maxima esomeprazole,maxima esomeprazole,True
 maxpro esomeprazole,maxpro esomeprazole,True
 maxpro esomeprazole,maxpro esomeprazole,True
-maxpro esomeprazole,maxpro esomeprazole,True
+maxpro esomeprazole,maxima esomeprazole,False
 maxpro esomeprazole,maxpro esomeprazole,True
 maxpro esomeprazole,maxpro esomeprazole,True
 maxpro esomeprazole,maxpro esomeprazole,True
@@ -515,8 +515,8 @@ montair montelukast sodium,montair montelukast sodium,True
 montair montelukast sodium,conaz fluconazole,False
 montair montelukast sodium,montex montelukast sodium,False
 montair montelukast sodium,montair montelukast sodium,True
-montair montelukast sodium,montair montelukast sodium,True
-montair montelukast sodium,candinil fluconazole,False
+montair montelukast sodium,montex montelukast sodium,False
+montair montelukast sodium,opton esomeprazole,False
 montair montelukast sodium,conaz fluconazole,False
 montair montelukast sodium,montair montelukast sodium,True
 montene montelukast sodium,montex montelukast sodium,False
@@ -526,7 +526,7 @@ montene montelukast sodium,montex montelukast sodium,False
 montene montelukast sodium,bacaid baclofen,False
 montene montelukast sodium,montene montelukast sodium,True
 montene montelukast sodium,montex montelukast sodium,False
-montene montelukast sodium,leptic clonazepam,False
+montene montelukast sodium,montex montelukast sodium,False
 montene montelukast sodium,montene montelukast sodium,True
 montene montelukast sodium,montene montelukast sodium,True
 montex montelukast sodium,montene montelukast sodium,False
@@ -551,7 +551,7 @@ napa extend paracetamol,leptic clonazepam,False
 napa extend paracetamol,leptic clonazepam,False
 napa paracetamol,napa paracetamol,True
 napa paracetamol,napa paracetamol,True
-napa paracetamol,maxpro esomeprazole,False
+napa paracetamol,napa paracetamol,True
 napa paracetamol,napa paracetamol,True
 napa paracetamol,napa paracetamol,True
 napa paracetamol,axodin fexofenadine hydrochloride,False
@@ -573,7 +573,7 @@ nexum esomeprazole,nexum esomeprazole,True
 nexum esomeprazole,nexum esomeprazole,True
 nexum esomeprazole,nexum esomeprazole,True
 nexum esomeprazole,nexum esomeprazole,True
-nexum esomeprazole,nexum esomeprazole,True
+nexum esomeprazole,nexcap esomeprazole,False
 nexum esomeprazole,nexum esomeprazole,True
 nexum esomeprazole,nexum esomeprazole,True
 nexum esomeprazole,nexum esomeprazole,True
@@ -593,7 +593,7 @@ nizoder ketoconazole cream,nizoder ketoconazole cream,True
 nizoder ketoconazole cream,nizoder ketoconazole cream,True
 nizoder ketoconazole cream,omastin fluconazole,False
 nizoder ketoconazole cream,nizoder ketoconazole cream,True
-nizoder ketoconazole cream,diflu fluconazole,False
+nizoder ketoconazole cream,canazole fluconazole,False
 nizoder ketoconazole cream,nizoder ketoconazole cream,True
 nizoder ketoconazole cream,nizoder ketoconazole cream,True
 nizoder ketoconazole cream,nizoder ketoconazole cream,True
@@ -651,7 +651,7 @@ provair montelukast sodium,provair montelukast sodium,True
 provair montelukast sodium,provair montelukast sodium,True
 renova paracetamol,renova paracetamol,True
 renova paracetamol,renova paracetamol,True
-renova paracetamol,denixil clonazepam,False
+renova paracetamol,metsina metronidazole,False
 renova paracetamol,napa paracetamol,False
 renova paracetamol,renova paracetamol,True
 renova paracetamol,renova paracetamol,True
@@ -661,14 +661,14 @@ renova paracetamol,renova paracetamol,True
 renova paracetamol,renova paracetamol,True
 rhinil cetirizine hydrochloride,renova paracetamol,False
 rhinil cetirizine hydrochloride,rhinil cetirizine hydrochloride,True
-rhinil cetirizine hydrochloride,denixil clonazepam,False
+rhinil cetirizine hydrochloride,renova paracetamol,False
 rhinil cetirizine hydrochloride,rhinil cetirizine hydrochloride,True
 rhinil cetirizine hydrochloride,rhinil cetirizine hydrochloride,True
 rhinil cetirizine hydrochloride,rivotril clonazepam,False
 rhinil cetirizine hydrochloride,rhinil cetirizine hydrochloride,True
 rhinil cetirizine hydrochloride,rhinil cetirizine hydrochloride,True
 rhinil cetirizine hydrochloride,rhinil cetirizine hydrochloride,True
-rhinil cetirizine hydrochloride,denixil clonazepam,False
+rhinil cetirizine hydrochloride,renova paracetamol,False
 ritch fexofenadine hydrochloride,ritch fexofenadine hydrochloride,True
 ritch fexofenadine hydrochloride,ritch fexofenadine hydrochloride,True
 ritch fexofenadine hydrochloride,ritch fexofenadine hydrochloride,True
@@ -759,9 +759,9 @@ trilock montelukast sodium,trilock montelukast sodium,True
 trilock montelukast sodium,trilock montelukast sodium,True
 trilock montelukast sodium,trilock montelukast sodium,True
 trilock montelukast sodium,ritch fexofenadine hydrochloride,False
-vifas fexofenadine hydrochloride,beklo baclofen,False
+vifas fexofenadine hydrochloride,nexcap esomeprazole,False
 vifas fexofenadine hydrochloride,vifas fexofenadine hydrochloride,True
-vifas fexofenadine hydrochloride,beklo baclofen,False
+vifas fexofenadine hydrochloride,nexcap esomeprazole,False
 vifas fexofenadine hydrochloride,vifas fexofenadine hydrochloride,True
 vifas fexofenadine hydrochloride,vifas fexofenadine hydrochloride,True
 vifas fexofenadine hydrochloride,vifas fexofenadine hydrochloride,True
@@ -772,7 +772,7 @@ vifas fexofenadine hydrochloride,vifas fexofenadine hydrochloride,True
 zithrin azithromycin dihydrate,zithrin azithromycin dihydrate,True
 zithrin azithromycin dihydrate,zithrin azithromycin dihydrate,True
 zithrin azithromycin dihydrate,zithrin azithromycin dihydrate,True
-zithrin azithromycin dihydrate,tridosil azithromycin dihydrate,False
+zithrin azithromycin dihydrate,rozith azithromycin dihydrate,False
 zithrin azithromycin dihydrate,zithrin azithromycin dihydrate,True
 zithrin azithromycin dihydrate,zithrin azithromycin dihydrate,True
 zithrin azithromycin dihydrate,zithrin azithromycin dihydrate,True

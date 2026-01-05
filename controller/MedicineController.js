@@ -207,6 +207,60 @@ class Medicine{
         }
     }
 
+    async add_search_history (data){
+        try {
+            const query = await db.query(
+                `
+                    INSERT INTO search_history_tbl(user_id, history_name)
+                    VALUES(${data.user_id}, '${data.search}')
+                `
+            )
+
+            console.log(query)
+
+
+            return query.command
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async get_search_history (id) {
+        try {
+            const query = await db.query(
+                `
+                    SELECT * FROM search_history_tbl WHERE user_id = ${id} ORDER BY created_at DESC
+                `
+            )
+
+            console.log(query.rows)
+            return query.rows
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async delete_search_history (id) {
+        try {
+            const query = await db.query(
+                `
+                    DELETE FROM search_history_tbl WHERE id=${id}
+                `
+            )
+
+            console.log(query)
+            return query.command
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
 }
 

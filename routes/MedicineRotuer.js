@@ -130,4 +130,48 @@ router.delete('/delete_medicine/:id', async (req, res)=>{
 })
 
 
+router.post('/add_search_history', async (req, res)=>{
+    try {
+        const search_history = await med.add_search_history(req.body)
+
+        console.log(search_history)
+
+        res.json({message : "Added Search History", data : search_history}).status(200)
+
+    } catch (error) {   
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+})
+
+router.get('/get_search_history/:id', async (req, res)=>{
+    try {
+        const search_history = await med.get_search_history(req.params.id)
+
+        console.log(search_history)
+
+        res.json(search_history).status(200)
+
+
+    } catch (error) {
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+})
+
+
+router.delete('/delete_search_history/:id', async (req, res)=>{
+    try {
+        const search_history = await med.delete_search_history(req.params.id)
+
+        res.json({message : "DELETE history", data  :search_history}).status(200)
+
+    } catch (error) {
+        console.log(error)
+        res.json({ error : error }).status(500)
+    }
+})
+
+
+
 module.exports = router

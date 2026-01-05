@@ -47,7 +47,7 @@ class User{
 
         
         try {
-            const query = await db.query(`SELECT username, password, name, user_role FROM user_tbl WHERE username='${username}'`)
+            const query = await db.query(`SELECT id, username, password, name, user_role FROM user_tbl WHERE username='${username}'`)
 
             if(query.rowCount == 0 ){
                  return false
