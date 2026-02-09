@@ -5,3 +5,5 @@ venv
 models/TrOCR/data/
 models/TrOCR/model/
 models/TrOCR/results/
+models/TrOCR/backup/
+models/TrOCR/trocr-prescription/
