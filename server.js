@@ -37,7 +37,12 @@ app.post('/ocr', upload.single('image'), (req, res) => {
   const imagePath = path.resolve(req.file.path);
   const pythonScript = path.resolve('./scripts/Pharma_TrOCR.py');
  
-  const child = exec(`python "${pythonScript}" "${imagePath}"`, { timeout: 60000 }, (error, stdout, stderr) => {
+  // Allow long-running OCR processes by disabling the 60s timeout
+  // and increasing the stdout/stderr buffer.
+  const child = exec(
+    `python "${pythonScript}" "${imagePath}"`,
+    { timeout: 0, maxBuffer: 10 * 1024 * 1024 },
+    (error, stdout, stderr) => {
 
     if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
 
