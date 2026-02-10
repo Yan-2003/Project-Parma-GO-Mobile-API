@@ -1,0 +1,219 @@
+Paracetamol
+Acetaminophen
+Aceta
+Ace
+Aceta Paracetamol
+Ibuprofen
+Aspirin
+Mefenamic Acid
+Naproxen
+Celecoxib
+Diclofenac
+Tramadol
+Codeine
+
+Amoxicillin
+Ampicillin
+Ciprofloxacin
+Levofloxacin
+Azithromycin
+Clarithromycin
+Doxycycline
+Metronidazole
+Cephalexin
+Cefuroxime
+Cefixime
+Ceftriaxone
+Clindamycin
+Vancomycin
+
+Cetirizine
+Loratadine
+Fexofenadine
+Diphenhydramine
+Chlorphenamine
+Levocetirizine
+
+Salbutamol
+Albuterol
+Terbutaline
+Budesonide
+Fluticasone
+Montelukast
+
+Omeprazole
+Esomeprazole
+Lansoprazole
+Pantoprazole
+Ranitidine
+Famotidine
+Antacid
+Simethicone
+Domperidone
+Metoclopramide
+
+Metformin
+Gliclazide
+Glimepiride
+Insulin
+Sitagliptin
+Empagliflozin
+Linagliptin
+Vildagliptin
+
+Amlodipine
+Losartan
+Valsartan
+Telmisartan
+Irbesartan
+Atenolol
+Metoprolol
+Propranolol
+Bisoprolol
+Carvedilol
+Enalapril
+Captopril
+Lisinopril
+Hydrochlorothiazide
+Furosemide
+Spironolactone
+
+Atorvastatin
+Simvastatin
+Rosuvastatin
+Pravastatin
+Ezetimibe
+Fenofibrate
+
+Clopidogrel
+Aspirin
+Warfarin
+Rivaroxaban
+Apixaban
+Heparin
+
+Vitamin A
+Vitamin B
+Vitamin B1
+Vitamin B6
+Vitamin B12
+Vitamin C
+Vitamin D
+Vitamin E
+Multivitamin
+Ferrous Sulfate
+Iron
+Folic Acid
+Zinc
+Calcium
+Magnesium
+
+Ascorbic Acid
+Cholecalciferol
+Ergocalciferol
+
+Prednisone
+Prednisolone
+Dexamethasone
+Hydrocortisone
+Betamethasone
+
+Mupirocin
+Fusidic Acid
+Clotrimazole
+Ketoconazole
+Terbinafine
+Fluconazole
+Itraconazole
+Nystatin
+
+Acyclovir
+Valacyclovir
+Oseltamivir
+Remdesivir
+
+Insulin Glargine
+Insulin Lispro
+Insulin Aspart
+
+Levetiracetam
+Phenytoin
+Carbamazepine
+Valproic Acid
+Gabapentin
+Pregabalin
+
+Amitriptyline
+Fluoxetine
+Sertraline
+Escitalopram
+Citalopram
+Venlafaxine
+Duloxetine
+Mirtazapine
+Bupropion
+
+Risperidone
+Olanzapine
+Quetiapine
+Haloperidol
+Clozapine
+Aripiprazole
+
+Diazepam
+Lorazepam
+Alprazolam
+Clonazepam
+Midazolam
+
+Oral Rehydration Salts
+ORS
+Dextrose
+Normal Saline
+Lactated Ringers
+
+Co-amoxiclav
+Trimethoprim
+Sulfamethoxazole
+Co-trimoxazole
+
+Hydroxychloroquine
+Allopurinol
+Colchicine
+Febuxostat
+
+Levothyroxine
+Methimazole
+Propylthiouracil
+
+Tamsulosin
+Finasteride
+Dutasteride
+Sildenafil
+Tadalafil
+
+Ethinylestradiol
+Levonorgestrel
+Medroxyprogesterone
+Norethisterone
+
+Insulin Regular
+Insulin NPH
+
+Eye Drops
+Artificial Tears
+Timolol
+Latanoprost
+Brimonidine
+
+Cough Syrup
+Dextromethorphan
+Guaifenesin
+Ambroxol
+Carbocisteine
+Bromhexine
+
+Antihistamine
+Decongestant
+Phenylephrine
+Pseudoephedrine

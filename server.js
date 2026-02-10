@@ -35,7 +35,7 @@ app.post('/ocr', upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image uploaded.' });
 
   const imagePath = path.resolve(req.file.path);
-  const pythonScript = path.resolve('./scripts/Pharma_TrOCR.py');
+  const pythonScript = path.resolve('./scripts/PreTrain.py');
  
   // Allow long-running OCR processes by disabling the 60s timeout
   // and increasing the stdout/stderr buffer.

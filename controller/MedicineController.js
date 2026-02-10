@@ -57,9 +57,6 @@ class Medicine{
                 ORDER BY score DESC, med.name ASC
             `, [input]);
             
-            console.log(query)
-            console.log(query.rows)
-
             return query.rows
 
         } catch (error) {
