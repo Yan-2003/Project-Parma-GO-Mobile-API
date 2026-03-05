@@ -124,7 +124,7 @@ def run_ocr(img):
 # =============================
 # OPTIONAL CLI USAGE
 # =============================
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     import sys, json
     if len(sys.argv) < 2:
         print(json.dumps({"error": "Missing image path"}))
@@ -139,4 +139,63 @@ if __name__ == "__main__":
         print(json.dumps({"text": "", "warning": "Image too blurry", "clarity": round(clarity,2)}))
         sys.exit(0)
     results = run_ocr(img)
-    print(json.dumps({"results": results}))
+    print(json.dumps({"results": results})) """
+
+if __name__ == "__main__":
+    import sys, json
+
+    if len(sys.argv) < 2:
+        print(json.dumps({"error": "Missing image path"}))
+        sys.exit(2)
+
+    image_path = sys.argv[1]
+
+    if not os.path.exists(image_path):
+        print(json.dumps({"error": "Image not found"}))
+        sys.exit(2)
+
+    img = preprocess(Image.open(image_path))
+
+    clarity = blur_score(img)
+
+    if clarity < BLUR_THRESHOLD:
+        print(json.dumps({
+            "text": "",
+            "warning": "Image too blurry",
+            "clarity": round(clarity,2)
+        }))
+        sys.exit(0)
+
+    results = run_ocr(img)
+
+    best_text = ""
+    best_score = -999999
+
+    for text, score in results:
+
+        clean = text.strip()
+
+        # ignore empty
+        if len(clean) < 3:
+            continue
+
+        # ignore numeric garbage like "1 1"
+        if not any(c.isalpha() for c in clean):
+            continue
+
+        if score > best_score:
+            best_score = score
+            best_text = clean
+
+    # fallback if all filtered
+    if best_text == "" and results:
+        best_text = results[0][0]
+
+    # drug dictionary correction
+    corrected, match_score = correct_drug(best_text)
+
+    final_text = corrected if corrected else best_text
+
+    print(json.dumps({
+        "text": final_text.lower().strip()
+    }))
