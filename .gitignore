@@ -7,3 +7,6 @@ models/TrOCR/model/
 models/TrOCR/results/
 models/TrOCR/backup/
 models/TrOCR/trocr-prescription/
+scripts/Testing/testing_words_backup/
+scripts/Testing/clean_low_conf.py
+scripts/Testing/testing_labels_backup.csv

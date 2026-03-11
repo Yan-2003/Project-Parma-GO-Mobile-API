@@ -1,43 +1,52 @@
 import os
+import sys
+import json
 import torch
 import cv2
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 from rapidfuzz import process, fuzz
-from wordfreq import zipf_frequency
+import re
 
 # =============================
 # CONFIG
 # =============================
+
 MODEL_NAME = "microsoft/trocr-base-handwritten"
-CONF_THRESHOLD = -20
-BLUR_THRESHOLD = 70
+
+BLUR_THRESHOLD = 60
 MIN_MATCH = 65
 MAX_LEN = 64
+
+ROTATIONS = [0, 90, 180, 270]
 
 # =============================
 # LOAD DRUG LIST
 # =============================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DRUG_FILE = os.path.join(BASE_DIR, "drugs.txt")
 
 def load_drugs():
     if not os.path.exists(DRUG_FILE):
         return []
+
     with open(DRUG_FILE, "r", encoding="utf-8") as f:
-        return [x.strip() for x in f if x.strip()]
+        return [x.strip().lower() for x in f if x.strip()]
 
 DRUGS = load_drugs()
 
 # =============================
 # DEVICE
 # =============================
-device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # =============================
 # MODEL
 # =============================
+
 processor = TrOCRProcessor.from_pretrained(MODEL_NAME, use_fast=False)
 model = VisionEncoderDecoderModel.from_pretrained(MODEL_NAME).to(device)
 model.eval()
@@ -45,6 +54,7 @@ model.eval()
 # =============================
 # IMAGE QUALITY
 # =============================
+
 def blur_score(img):
     gray = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
     return cv2.Laplacian(gray, cv2.CV_64F).var()
@@ -52,97 +62,126 @@ def blur_score(img):
 # =============================
 # PREPROCESS
 # =============================
+
 def preprocess(img):
+
     img = ImageOps.exif_transpose(img)
+
     img = img.convert("L")
-    img = ImageEnhance.Contrast(img).enhance(2.5)
-    img = ImageEnhance.Sharpness(img).enhance(2.3)
-    img = img.filter(ImageFilter.MedianFilter(3))
+
+    img = np.array(img)
+
+    # CLAHE contrast improvement
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    img = clahe.apply(img)
+
+    # adaptive threshold
+    img = cv2.adaptiveThreshold(
+        img,
+        255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY,
+        31,
+        2
+    )
+
+    # noise removal
+    kernel = np.ones((2,2),np.uint8)
+    img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+
+    img = Image.fromarray(img)
+
+    img = ImageEnhance.Sharpness(img).enhance(2.5)
+
     return img.convert("RGB")
 
 # =============================
-# SMART DRUG CORRECTION
+# CLEAN OCR TEXT
 # =============================
-def correct_drug(text):
-    if not DRUGS:
-        return "", 0
 
-    clean = "".join(c for c in text if c.isalnum() or c.isspace()).strip()
-    if len(clean) < 4 or not any(c.isalpha() for c in clean):
-        return "", 0
+def clean_text(text):
 
-    words = clean.split()
-    best_name = ""
-    best_score = 0
-    candidates = words + [clean]
+    text = text.lower()
 
-    for cand in candidates:
-        match = process.extractOne(cand, DRUGS, scorer=fuzz.ratio)
-        if not match:
-            continue
-        name, score, _ = match
-        if score > best_score:
-            best_score = score
-            best_name = name
+    text = re.sub(r'[^a-z]', '', text)
 
-    if best_score >= MIN_MATCH:
-        return best_name, best_score
-
-    return "", best_score
-
-# =============================
-# LANGUAGE SCORE
-# =============================
-def lang_score(text):
-    words = text.lower().split()
-    return sum(zipf_frequency(w, "en") for w in words)
+    return text
 
 # =============================
 # OCR
 # =============================
+
 def run_ocr(img):
+
     results = []
-    for angle in [0, 90, 180, 270]:
+
+    for angle in ROTATIONS:
+
         rotated = img.rotate(angle, expand=True)
+
         pixel = processor(rotated, return_tensors="pt").pixel_values.to(device)
+
         with torch.no_grad():
-            out = model.generate(
+
+            output = model.generate(
                 pixel,
                 max_length=MAX_LEN,
-                num_beams=2,
-                do_sample=False,
-                repetition_penalty=1.4,
-                length_penalty=0.9,
-                output_scores=True,
+                num_beams=5,
                 return_dict_in_generate=True,
+                output_scores=True
             )
-        text = processor.batch_decode(out.sequences, skip_special_tokens=True)[0].strip()
-        score = sum(s.max().item() for s in out.scores) if out.scores else 0
-        results.append((text, score))
+
+        text = processor.batch_decode(output.sequences, skip_special_tokens=True)[0]
+
+        text = clean_text(text)
+
+        if text:
+            results.append(text)
+
     return results
 
 # =============================
-# OPTIONAL CLI USAGE
+# MATCH DRUG
 # =============================
-""" if __name__ == "__main__":
-    import sys, json
-    if len(sys.argv) < 2:
-        print(json.dumps({"error": "Missing image path"}))
-        sys.exit(2)
-    image_path = sys.argv[1]
-    if not os.path.exists(image_path):
-        print(json.dumps({"error": "Image not found"}))
-        sys.exit(2)
-    img = preprocess(Image.open(image_path))
-    clarity = blur_score(img)
-    if clarity < BLUR_THRESHOLD:
-        print(json.dumps({"text": "", "warning": "Image too blurry", "clarity": round(clarity,2)}))
-        sys.exit(0)
-    results = run_ocr(img)
-    print(json.dumps({"results": results})) """
+
+def match_drug(ocr_results):
+
+    best_drug = ""
+    best_score = 0
+
+    for text in ocr_results:
+
+        match = process.extractOne(
+            text,
+            DRUGS,
+            scorer=fuzz.ratio
+        )
+
+        if match:
+
+            name, score, _ = match
+
+            # combine multiple fuzzy metrics
+            partial = fuzz.partial_ratio(text, name)
+            token = fuzz.token_set_ratio(text, name)
+
+            final_score = (score * 0.5) + (partial * 0.3) + (token * 0.2)
+
+            if final_score > best_score:
+
+                best_score = final_score
+                best_drug = name
+
+    if best_score >= MIN_MATCH:
+        return best_drug
+
+    return ""
+
+# =============================
+# MAIN
+# =============================
 
 if __name__ == "__main__":
-    import sys, json
 
     if len(sys.argv) < 2:
         print(json.dumps({"error": "Missing image path"}))
@@ -159,43 +198,18 @@ if __name__ == "__main__":
     clarity = blur_score(img)
 
     if clarity < BLUR_THRESHOLD:
+
         print(json.dumps({
             "text": "",
-            "warning": "Image too blurry",
-            "clarity": round(clarity,2)
+            "warning": "Image too blurry"
         }))
+
         sys.exit(0)
 
-    results = run_ocr(img)
+    ocr_results = run_ocr(img)
 
-    best_text = ""
-    best_score = -999999
-
-    for text, score in results:
-
-        clean = text.strip()
-
-        # ignore empty
-        if len(clean) < 3:
-            continue
-
-        # ignore numeric garbage like "1 1"
-        if not any(c.isalpha() for c in clean):
-            continue
-
-        if score > best_score:
-            best_score = score
-            best_text = clean
-
-    # fallback if all filtered
-    if best_text == "" and results:
-        best_text = results[0][0]
-
-    # drug dictionary correction
-    corrected, match_score = correct_drug(best_text)
-
-    final_text = corrected if corrected else best_text
+    best_match = match_drug(ocr_results)
 
     print(json.dumps({
-        "text": final_text.lower().strip()
+        "text": best_match
     }))

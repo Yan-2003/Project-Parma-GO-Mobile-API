@@ -1,0 +1,8 @@
+
+========== OCR TEST RESULTS ==========
+Total Images: 473
+Correct Predictions: 356
+Accuracy: 75.26%
+Blurry Images: 0
+Low Confidence: 0
+Mismatches: 117
